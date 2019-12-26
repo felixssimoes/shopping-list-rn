@@ -1,13 +1,13 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 
-import BlankScreen from 'ui/screens/blank.screen';
 import store from 'store';
+import MainStack from 'app/routes/main.route';
 
 const App = () => {
   return (
     <Provider store={store}>
-      <BlankScreen message="My Shopping List!" />
+      <MainStack />
     </Provider>
   );
 };
