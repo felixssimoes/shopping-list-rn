@@ -2,8 +2,10 @@ import { combineReducers, createStore, applyMiddleware, compose } from 'redux';
 
 import Reactotron from 'config/reactotron';
 
+import itemsReducer from './items/items.reducer';
+
 const reducers = combineReducers({
-  lists: (state = null) => state,
+  items: itemsReducer,
 });
 
 const middlewares = [];

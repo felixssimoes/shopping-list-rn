@@ -6,14 +6,18 @@ import {
   Text,
   Button,
 } from 'react-native';
+import { useSelector } from 'react-redux';
 
 import ItemName from 'ui/components/item_name';
 import { ScrollView } from 'react-native-gesture-handler';
+import { getAllItems } from 'store/selectors';
+import { addItem } from 'data/repository/items.repository';
 
 const ListScreen = () => {
   const nameRef = useRef(null);
-  const [items, setItems] = useState([]);
   const [itemIndex, setItemIndex] = useState(null);
+
+  const items = useSelector(state => getAllItems(state));
 
   useEffect(() => nameRef.current.focus(), []);
 
@@ -25,11 +29,10 @@ const ListScreen = () => {
     }
 
     if (itemIndex !== null) {
-      items[itemIndex] = value;
+      // items[itemIndex] = value;
     } else {
-      items.push(value);
+      addItem({ name: value });
     }
-    setItems([...items]);
     setItemIndex(null);
   };
 
@@ -48,7 +51,7 @@ const ListScreen = () => {
         onCancel={onCancelNameChange}
       />
       <ScrollView style={{ flex: 1 }}>
-        {items.map((name, index) => (
+        {items.map(({ name }, index) => (
           <View
             key={`${name}${index}`}
             style={{
