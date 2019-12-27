@@ -4,7 +4,8 @@ import React, {
   forwardRef,
   useState,
 } from 'react';
-import { View, TextInput, StyleSheet, Button } from 'react-native';
+import { View, TextInput, StyleSheet } from 'react-native';
+import IconButton from './icon_button';
 
 const ItemName = forwardRef(({ onSubmit, onCancel }, ref) => {
   const inputRef = useRef(null);
@@ -37,14 +38,13 @@ const ItemName = forwardRef(({ onSubmit, onCancel }, ref) => {
         onChangeText={setNameValue}
         placeholder="Item name..."
         onSubmitEditing={onPressOk}
+        blurOnSubmit={false}
       />
-      <Button title="Cancel" onPress={onPressCancel} />
-      <Button title="Ok" onPress={onPressOk} />
+      <IconButton name="close" color="#888" onPress={onPressCancel} />
+      <IconButton name="check" color="lightgreen" onPress={onPressOk} />
     </View>
   );
 });
-
-export default ItemName;
 
 const styles = StyleSheet.create({
   container: {
@@ -59,3 +59,5 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
 });
+
+export default ItemName;
