@@ -6,10 +6,12 @@ const _globalItems = [];
 export const addItem = async ({ name }) => {
   const id = Date.now().toString();
   const existingItem = _findItemWithName(name);
+
   if (existingItem !== undefined) {
-    console.log("There's already an item with that name");
-    return false;
+    uncheckItem(existingItem);
+    return true;
   }
+
   _globalItems.push({
     id,
     name,
