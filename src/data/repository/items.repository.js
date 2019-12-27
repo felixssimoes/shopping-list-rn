@@ -10,7 +10,13 @@ export const addItem = async ({ name }) => {
     console.log("There's already an item with that name");
     return false;
   }
-  _globalItems.push({ id, name, checked: false });
+  _globalItems.push({
+    id,
+    name,
+    checked: false,
+    checkedCount: 0,
+    uncheckedAt: Date.now(),
+  });
   store.dispatch(actions.updateItemsList([..._globalItems]));
   return true;
 };
@@ -35,6 +41,26 @@ export const updateItem = async item => {
   store.dispatch(actions.updateItemsList([..._globalItems]));
 
   return true;
+};
+
+export const checkItem = item => {
+  const updatedItem = {
+    ...item,
+    checked: true,
+    checkedCount: item.checkedCount + 1,
+  };
+
+  return updateItem(updatedItem);
+};
+
+export const uncheckItem = item => {
+  const updatedItem = {
+    ...item,
+    checked: false,
+    uncheckedAt: Date.now(),
+  };
+
+  return updateItem(updatedItem);
 };
 
 const _findItemWithName = name => {

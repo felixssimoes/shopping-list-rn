@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
 import { useSelector } from 'react-redux';
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -9,8 +9,17 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 const ItemsList = forwardRef(
   ({ onEditItem, onCheckItem, onUncheckItem, style }, ref) => {
-    const checkedItems = useSelector(state => getAllCheckedItems(state));
-    const uncheckedItems = useSelector(state => getAllUncheckedItems(state));
+    const checkedItems = useSelector(state =>
+      getAllCheckedItems(state).sort(
+        (i1, i2) => i2.checkedCount - i1.checkedCount,
+      ),
+    );
+
+    const uncheckedItems = useSelector(state =>
+      getAllUncheckedItems(state).sort(
+        (i1, i2) => i2.uncheckedAt - i1.uncheckedAt,
+      ),
+    );
 
     let listRowMap = null;
 

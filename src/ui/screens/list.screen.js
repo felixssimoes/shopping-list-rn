@@ -4,7 +4,12 @@ import { useSelector } from 'react-redux';
 
 import ItemName from 'ui/components/item_name';
 import { getAllItems } from 'store/selectors';
-import { addItem, updateItem } from 'data/repository/items.repository';
+import {
+  addItem,
+  updateItem,
+  checkItem,
+  uncheckItem,
+} from 'data/repository/items.repository';
 import ItemsList from 'ui/components/items_list';
 
 const ListScreen = () => {
@@ -41,11 +46,11 @@ const ListScreen = () => {
   };
 
   const _onCheckItem = item => {
-    updateItem({ ...item, checked: true });
+    checkItem(item);
   };
 
   const _onUncheckItem = item => {
-    updateItem({ ...item, checked: false });
+    uncheckItem(item);
   };
 
   return (
