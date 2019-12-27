@@ -7,7 +7,8 @@ import React, {
 import { View, TextInput, StyleSheet } from 'react-native';
 import IconButton from './icon_button';
 
-const ItemName = forwardRef(({ onSubmit, onCancel }, ref) => {
+const ItemName = forwardRef((props, ref) => {
+  const { onSubmit, onCancel, ...otherProps } = props;
   const inputRef = useRef(null);
   const [nameValue, setNameValue] = useState('');
 
@@ -39,6 +40,7 @@ const ItemName = forwardRef(({ onSubmit, onCancel }, ref) => {
         placeholder="Item name..."
         onSubmitEditing={onPressOk}
         blurOnSubmit={false}
+        {...otherProps}
       />
       <IconButton name="close" color="#888" onPress={onPressCancel} />
       <IconButton name="check" color="lightgreen" onPress={onPressOk} />

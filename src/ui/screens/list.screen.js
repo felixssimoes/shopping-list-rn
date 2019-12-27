@@ -9,6 +9,7 @@ import ItemsList from 'ui/components/items_list';
 
 const ListScreen = () => {
   const nameRef = useRef(null);
+  const listRef = useRef(null);
 
   const items = useSelector(state => getAllItems(state));
   const [selectedItem, setSelectedItem] = useState(null);
@@ -39,6 +40,14 @@ const ListScreen = () => {
     return nameRef.current.blur();
   };
 
+  const _onCheckItem = item => {
+    updateItem({ ...item, checked: true });
+  };
+
+  const _onUncheckItem = item => {
+    updateItem({ ...item, checked: false });
+  };
+
   return (
     <View style={styles.screenContainer}>
       <TouchableWithoutFeedback onPress={() => nameRef.current.blur()}>
@@ -48,8 +57,10 @@ const ListScreen = () => {
         ref={nameRef}
         onSubmit={onSubmitItemName}
         onCancel={onCancelNameChange}
+        onFocus={() => listRef.current.closeAllRows()}
       />
       <ItemsList
+        ref={listRef}
         style={styles.itemsList}
         items={items}
         onEditItem={item => {
@@ -57,6 +68,8 @@ const ListScreen = () => {
           nameRef.current.setName(item.name);
           nameRef.current.focus();
         }}
+        onCheckItem={_onCheckItem}
+        onUncheckItem={_onUncheckItem}
       />
     </View>
   );

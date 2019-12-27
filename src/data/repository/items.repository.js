@@ -9,7 +9,7 @@ export const addItem = async ({ name }) => {
     console.log("There's already an item with that name");
     return false;
   }
-  store.dispatch(actions.addItem({ id, name }));
+  store.dispatch(actions.addItem({ id, name, checked: false }));
   return true;
 };
 
