@@ -11,29 +11,34 @@ import { useSelector } from 'react-redux';
 import ItemName from 'ui/components/item_name';
 import { ScrollView } from 'react-native-gesture-handler';
 import { getAllItems } from 'store/selectors';
-import { addItem } from 'data/repository/items.repository';
+import { addItem, updateItem } from 'data/repository/items.repository';
 
 const ListScreen = () => {
   const nameRef = useRef(null);
-  const [itemIndex, setItemIndex] = useState(null);
 
   const items = useSelector(state => getAllItems(state));
+  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => nameRef.current.focus(), []);
 
-  const onSubmitItemName = value => {
-    console.log('name set to:', value);
+  const onSubmitItemName = async value => {
     if (value === '') {
       nameRef.current.blur();
       return;
     }
 
-    if (itemIndex !== null) {
-      // items[itemIndex] = value;
+    if (selectedItem !== null) {
+      if (!(await updateItem({ ...selectedItem, name: value }))) {
+        return false;
+      }
     } else {
-      addItem({ name: value });
+      if (!(await addItem({ name: value }))) {
+        return false;
+      }
     }
-    setItemIndex(null);
+    setSelectedItem(null);
+
+    return true;
   };
 
   const onCancelNameChange = () => {
@@ -51,20 +56,20 @@ const ListScreen = () => {
         onCancel={onCancelNameChange}
       />
       <ScrollView style={{ flex: 1 }}>
-        {items.map(({ name }, index) => (
+        {items.map((item, index) => (
           <View
-            key={`${name}${index}`}
+            key={`${item.name}${index}`}
             style={{
               alignSelf: 'stretch',
               flexDirection: 'row',
               alignContent: 'center',
             }}>
-            <Text style={{ flex: 1 }}>{name}</Text>
+            <Text style={{ flex: 1 }}>{item.name}</Text>
             <Button
               title="edit"
               onPress={() => {
-                setItemIndex(index);
-                nameRef.current.setName(items[index]);
+                setSelectedItem(item);
+                nameRef.current.setName(item.name);
                 nameRef.current.focus();
               }}
             />

@@ -16,8 +16,10 @@ const ItemName = forwardRef(({ onSubmit, onCancel }, ref) => {
     setName: newName => setNameValue(newName),
   }));
 
-  const onPressOk = () => {
-    onSubmit(nameValue);
+  const onPressOk = async () => {
+    if (!(await onSubmit(nameValue))) {
+      return;
+    }
     setNameValue('');
   };
 
