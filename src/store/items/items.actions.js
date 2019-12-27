@@ -1,6 +1,5 @@
 import { createAction } from 'utils/redux.utils';
 import itemsTypes from './items.types';
 
-export const addItem = item => createAction(itemsTypes.item.add, item);
-
-export const updateItem = item => createAction(itemsTypes.item.update, item);
+export const updateItemsList = items =>
+  createAction(itemsTypes.list.update, items);

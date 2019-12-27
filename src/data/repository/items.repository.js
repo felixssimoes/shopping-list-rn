@@ -1,6 +1,7 @@
 import store from 'store';
 import * as actions from 'store/actions';
-import { getAllItems } from 'store/selectors';
+
+const _globalItems = [];
 
 export const addItem = async ({ name }) => {
   const id = Date.now().toString();
@@ -9,7 +10,8 @@ export const addItem = async ({ name }) => {
     console.log("There's already an item with that name");
     return false;
   }
-  store.dispatch(actions.addItem({ id, name, checked: false }));
+  _globalItems.push({ id, name, checked: false });
+  store.dispatch(actions.updateItemsList([..._globalItems]));
   return true;
 };
 
@@ -24,11 +26,22 @@ export const updateItem = async item => {
     return false;
   }
 
-  store.dispatch(actions.updateItem(item));
+  const itemIndex = _itemIndex(item);
+  if (itemIndex < 0) {
+    console.log('Error finding item');
+    return false;
+  }
+  _globalItems[itemIndex] = item;
+  store.dispatch(actions.updateItemsList([..._globalItems]));
 
   return true;
 };
 
 const _findItemWithName = name => {
-  return getAllItems(store.getState()).find(i => i.name === name);
+  return _globalItems.find(i => i.name === name);
+};
+
+const _itemIndex = item => {
+  const index = _globalItems.findIndex(i => i.id === item.id);
+  return index;
 };
