@@ -1,17 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  Text,
-  Button,
-} from 'react-native';
+import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import ItemName from 'ui/components/item_name';
-import { ScrollView } from 'react-native-gesture-handler';
 import { getAllItems } from 'store/selectors';
 import { addItem, updateItem } from 'data/repository/items.repository';
+import ItemsList from 'ui/components/items_list';
 
 const ListScreen = () => {
   const nameRef = useRef(null);
@@ -55,27 +49,15 @@ const ListScreen = () => {
         onSubmit={onSubmitItemName}
         onCancel={onCancelNameChange}
       />
-      <ScrollView style={{ flex: 1 }}>
-        {items.map((item, index) => (
-          <View
-            key={`${item.name}${index}`}
-            style={{
-              alignSelf: 'stretch',
-              flexDirection: 'row',
-              alignContent: 'center',
-            }}>
-            <Text style={{ flex: 1 }}>{item.name}</Text>
-            <Button
-              title="edit"
-              onPress={() => {
-                setSelectedItem(item);
-                nameRef.current.setName(item.name);
-                nameRef.current.focus();
-              }}
-            />
-          </View>
-        ))}
-      </ScrollView>
+      <ItemsList
+        style={styles.itemsList}
+        items={items}
+        onEditItem={item => {
+          setSelectedItem(item);
+          nameRef.current.setName(item.name);
+          nameRef.current.focus();
+        }}
+      />
     </View>
   );
 };
@@ -90,5 +72,8 @@ const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
     alignItems: 'stretch',
+  },
+  itemsList: {
+    flex: 1,
   },
 });
