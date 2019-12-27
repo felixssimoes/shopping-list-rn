@@ -22,32 +22,36 @@ const ItemsList = forwardRef(
       {
         id: 'unchecked',
         title: 'Shopping List',
-        data: uncheckedItems.map(i => ({ key: i.id, ...i })),
+        data: uncheckedItems.map(i => ({ key: i.id, shoppingItem: i })),
       },
       {
         id: 'checked',
         title: 'Often bought',
-        data: checkedItems.map(i => ({ key: i.id, ...i })),
+        data: checkedItems.map(i => ({ key: i.id, shoppingItem: i })),
       },
     ];
 
-    const _onToggleItemCheck = item => {
-      if (item.checked) {
-        onUncheckItem(item);
+    const _onToggleItemCheck = shoppingItem => {
+      if (shoppingItem.checked) {
+        onUncheckItem(shoppingItem);
       } else {
-        onCheckItem(item);
+        onCheckItem(shoppingItem);
       }
     };
 
     const _renderItem = ({ item, index, section }, rowMap) => {
+      const { shoppingItem } = item;
+      const iconName = shoppingItem.checked ? 'shopping-cart' : 'square-o';
+
+      // save row map so that we can close all rows when needed
       listRowMap = rowMap;
-      const iconName = item.checked ? 'shopping-cart' : 'square-o';
+
       return (
         <TouchableHighlight
-          onPress={() => _onToggleItemCheck(item)}
+          onPress={() => _onToggleItemCheck(shoppingItem)}
           underlayColor={'#AAA'}>
           <View style={styles.cellContainer}>
-            <Text style={styles.itemNameText}>{item.name}</Text>
+            <Text style={styles.itemNameText}>{shoppingItem.name}</Text>
             <Icon name={iconName} size={24} />
           </View>
         </TouchableHighlight>
@@ -55,6 +59,7 @@ const ItemsList = forwardRef(
     };
 
     const _renderHiddenItem = ({ item, index, section }, rowMap) => {
+      const { shoppingItem, key } = item;
       return (
         <View style={styles.cellHiddenActions}>
           <IconButton
@@ -62,8 +67,8 @@ const ItemsList = forwardRef(
             color="blue"
             size={30}
             onPress={() => {
-              onEditItem(item);
-              _closeRow(rowMap, item.id);
+              onEditItem(shoppingItem);
+              _closeRow(rowMap, key);
             }}
           />
         </View>
