@@ -1,7 +1,13 @@
 import store from 'store';
 import * as actions from 'store/actions';
+import * as fileDataSource from 'data/data_source/file.data_source';
 
-const _globalItems = [];
+let _globalItems = [];
+
+export const loadCachedItems = async () => {
+  _globalItems = (await fileDataSource.loadItems()) || [];
+  _updateReduxState();
+};
 
 export const addItem = async ({ name }) => {
   const id = Date.now().toString();
@@ -19,7 +25,9 @@ export const addItem = async ({ name }) => {
     checkedCount: 0,
     uncheckedAt: Date.now(),
   });
-  store.dispatch(actions.updateItemsList([..._globalItems]));
+
+  _saveAndUpdateRedux();
+
   return true;
 };
 
@@ -40,7 +48,8 @@ export const updateItem = async item => {
     return false;
   }
   _globalItems[itemIndex] = item;
-  store.dispatch(actions.updateItemsList([..._globalItems]));
+
+  _saveAndUpdateRedux();
 
   return true;
 };
@@ -72,4 +81,17 @@ const _findItemWithName = name => {
 const _itemIndex = item => {
   const index = _globalItems.findIndex(i => i.id === item.id);
   return index;
+};
+
+const _saveAndUpdateRedux = async () => {
+  await _saveItems();
+  _updateReduxState();
+};
+
+const _saveItems = async () => {
+  await fileDataSource.saveItems(_globalItems);
+};
+
+const _updateReduxState = () => {
+  store.dispatch(actions.updateItemsList([..._globalItems]));
 };
