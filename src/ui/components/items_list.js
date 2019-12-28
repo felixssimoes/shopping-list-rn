@@ -109,9 +109,13 @@ const ItemsList = forwardRef(
     };
 
     const _closeAllRows = () => {
+      if (_openRowRefs.length === 0) {
+        return;
+      }
       _openRowRefs.forEach(rowRef => {
         rowRef && rowRef.closeRow && rowRef.closeRow();
       });
+      _openRowRefs = [];
     };
 
     return (
