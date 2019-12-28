@@ -9,8 +9,11 @@ import {
   updateItem,
   checkItem,
   uncheckItem,
+  deleteItem,
+  undoDeleteItem,
 } from 'data/repository/items.repository';
 import ItemsList from 'ui/components/items_list';
+import SnackBar from 'ui/components/snackbar';
 
 const ListScreen = () => {
   const nameRef = useRef(null);
@@ -18,6 +21,7 @@ const ListScreen = () => {
 
   const items = useSelector(state => getAllItems(state));
   const [selectedItem, setSelectedItem] = useState(null);
+  const [showSnackbar, setShowSnackbar] = useState(null);
 
   useEffect(() => nameRef.current.focus(), []);
 
@@ -42,15 +46,35 @@ const ListScreen = () => {
   };
 
   const onCancelNameChange = () => {
-    return nameRef.current.blur();
+    nameRef.current.blur();
   };
 
   const _onCheckItem = item => {
+    nameRef.current.blur();
     checkItem(item);
   };
 
   const _onUncheckItem = item => {
+    nameRef.current.blur();
     uncheckItem(item);
+  };
+
+  let snackbarTimeout;
+
+  const _onDeleteItem = item => {
+    nameRef.current.blur();
+    deleteItem(item);
+    setShowSnackbar({
+      title: `Deleted ${item.name}`,
+      onPressUndo: () => {
+        undoDeleteItem(item);
+        setShowSnackbar(null);
+      },
+    });
+    if (snackbarTimeout) {
+      clearTimeout(snackbarTimeout);
+    }
+    snackbarTimeout = setTimeout(() => setShowSnackbar(null), 3000);
   };
 
   return (
@@ -75,7 +99,9 @@ const ListScreen = () => {
         }}
         onCheckItem={_onCheckItem}
         onUncheckItem={_onUncheckItem}
+        onDeleteItem={_onDeleteItem}
       />
+      {!!showSnackbar && <SnackBar {...showSnackbar} />}
     </View>
   );
 };

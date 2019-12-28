@@ -8,7 +8,7 @@ import { getAllCheckedItems, getAllUncheckedItems } from 'store/selectors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const ItemsList = forwardRef(
-  ({ onEditItem, onCheckItem, onUncheckItem, style }, ref) => {
+  ({ onEditItem, onCheckItem, onUncheckItem, onDeleteItem, style }, ref) => {
     const checkedItems = useSelector(state =>
       getAllCheckedItems(state).sort(
         (i1, i2) => i2.checkedCount - i1.checkedCount,
@@ -20,8 +20,6 @@ const ItemsList = forwardRef(
         (i1, i2) => i2.uncheckedAt - i1.uncheckedAt,
       ),
     );
-
-    let listRowMap = null;
 
     useImperativeHandle(ref, () => ({
       closeAllRows: _closeAllRows,
@@ -48,12 +46,15 @@ const ItemsList = forwardRef(
       }
     };
 
+    let _openRowRefs = [];
+
+    const _onRowDidOpen = (rowKey, rowMap) => {
+      _openRowRefs.push(rowMap[rowKey]);
+    };
+
     const _renderItem = ({ item, index, section }, rowMap) => {
       const { shoppingItem } = item;
       const iconName = shoppingItem.checked ? 'shopping-cart' : 'square-o';
-
-      // save row map so that we can close all rows when needed
-      listRowMap = rowMap;
 
       return (
         <TouchableHighlight
@@ -71,6 +72,12 @@ const ItemsList = forwardRef(
       const { shoppingItem, key } = item;
       return (
         <View style={styles.cellHiddenActions}>
+          <IconButton
+            name="trash-o"
+            color="red"
+            size={30}
+            onPress={() => onDeleteItem(shoppingItem)}
+          />
           <IconButton
             name="edit"
             color="blue"
@@ -96,17 +103,15 @@ const ItemsList = forwardRef(
     };
 
     const _closeRow = (rowMap, rowKey) => {
-      console.log(rowMap);
       if (rowMap[rowKey]) {
         rowMap[rowKey].closeRow();
       }
     };
 
     const _closeAllRows = () => {
-      if (listRowMap === null) {
-        return;
-      }
-      Object.keys(listRowMap).forEach(rowKey => listRowMap[rowKey].closeRow());
+      _openRowRefs.forEach(rowRef => {
+        rowRef && rowRef.closeRow && rowRef.closeRow();
+      });
     };
 
     return (
@@ -116,7 +121,8 @@ const ItemsList = forwardRef(
         renderItem={_renderItem}
         renderHiddenItem={_renderHiddenItem}
         renderSectionHeader={_renderSectionHeader}
-        rightOpenValue={-50}
+        onRowDidOpen={_onRowDidOpen}
+        rightOpenValue={-100}
         disableRightSwipe
         previewRowKey={'0'}
         previewOpenValue={-40}
@@ -141,8 +147,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   cellHiddenActions: {
+    flexDirection: 'row',
     backgroundColor: '#eee',
-    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
   },
   cellContainer: {
     backgroundColor: '#fff',

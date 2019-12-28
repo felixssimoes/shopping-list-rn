@@ -74,6 +74,16 @@ export const uncheckItem = item => {
   return updateItem(updatedItem);
 };
 
+export const deleteItem = async item => {
+  _globalItems = _globalItems.filter(i => i.id !== item.id);
+  await _saveAndUpdateRedux();
+};
+
+export const undoDeleteItem = async item => {
+  _globalItems.push(item);
+  await _saveAndUpdateRedux();
+};
+
 const _findItemWithName = name => {
   return _globalItems.find(i => i.name === name);
 };
