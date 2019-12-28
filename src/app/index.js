@@ -1,20 +1,25 @@
 import React, { useEffect } from 'react';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 
 import store from 'store';
 import MainStack from 'app/routes/main.route';
-import { loadCachedItems } from 'data/repository/items.repository';
+import { appStart } from 'store/actions';
 
 const App = () => {
-  useEffect(() => {
-    loadCachedItems();
-  }, []);
-
   return (
     <Provider store={store}>
-      <MainStack />
+      <AppContainer />
     </Provider>
   );
+};
+
+const AppContainer = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(appStart());
+  }, [dispatch]);
+
+  return <MainStack />;
 };
 
 export default App;
